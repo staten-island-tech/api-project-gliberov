@@ -1,5 +1,5 @@
 function greet(name){
-    const greetPromise = new Promise(function (resolve,rejected) {
+    const greetPromise = new Promise(function (resolve, rejected) {
         resolve(`Hello ${name}`);
     });
     return greetPromise;
