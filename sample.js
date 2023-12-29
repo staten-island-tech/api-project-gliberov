@@ -20,6 +20,7 @@ async function getData(URL){
     }
     //take respone from server and convert it to JSON
     const data = await response.json();
+    console.log(data)
     document.querySelector("h1").textContent = data.content;
     document.querySelector("h2").textContent = data.author;  
     } catch (error) {
