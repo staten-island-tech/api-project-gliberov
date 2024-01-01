@@ -17,38 +17,43 @@ async function getData(URL){
 getData(baseURL); */
 import '../css/style.css'
 import {DOMSelectors} from './selectors'
-const margin = { top:70, right: 30, bottom: 40, left: 80};
-const width = 1200 - margin.left - margin.right;
-const height = 500 - margin.top - margin.bottom;
 
-const x = d3.scaleTime()
-    .range([0,width]);
-const y = d3.scaleLinear()
-    .range([height,0]);
-
-const line = d3.line()
-    .x(d => x(d.date))
-    .y(d => y(d.open));
-
-const svg = d3.select("#chart-container")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-const tooltip = d3.select("body")
-.append("div")
-.attr("class", "tooltip");
 
 DOMSelectors.form.addEventListener('submit', function(event) {
     event.preventDefault();
+    async function getTimeSeriesData() {
     let symbol = DOMSelectors.symbol.value.toUpperCase()
-    console.log(symbol) 
-    d3.json(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=full&apikey=754XM1A6MI6WI2K4`
-    ).then(function (data) {
+    console.log(symbol)
+    const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=full&apikey=754XM1A6MI6WI2K4`
+    try {
+        const response = await fetch(URL)
+        if (response.status != 200){throw new Error(response.statusText); }
+        const data = await response.json()
         const dates = Object.keys(data['Time Series (5min)']);
         const fullList = []
+        const margin = { top:70, right: 30, bottom: 40, left: 80};
+        const width = 1200 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        const x = d3.scaleTime()
+            .range([0,width]);
+        const y = d3.scaleLinear()
+            .range([height,0]);
+
+        const line = d3.line()
+            .x(d => x(d.date))
+            .y(d => y(d.open));
+
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip");
         
         dates.forEach(date => {
             const point = { 
@@ -58,7 +63,8 @@ DOMSelectors.form.addEventListener('submit', function(event) {
                 low: parseFloat(data['Time Series (5min)'][date]["3. low"]),
                 close: parseFloat(data['Time Series (5min)'][date]["4. close"]),
                 volume: parseFloat(data['Time Series (5min)'][date]["5. volume"])}
-        fullList.push(point)
+        
+            fullList.push(point)
         })
         fullList.reverse()
         const parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S")
@@ -195,5 +201,12 @@ DOMSelectors.form.addEventListener('submit', function(event) {
                 .style("font-size", "9px")
                 .style("font-family", "sans-serif")
                 .text("ty AlphaVantage for the datasets")
-    })
-})
+    }
+    catch (error) {
+        document.querySelector("h1").textContent = error;  
+        document.querySelector("h2").textContent = "Please search for something else";
+    }
+    }
+    getTimeSeriesData(URL);
+}
+)
