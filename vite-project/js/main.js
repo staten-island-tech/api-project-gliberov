@@ -15,7 +15,6 @@ async function getData(URL){
   
 }
 getData(baseURL); */
-import {data} from "../vite-project/demo.js"
 import '../css/style.css'
 const margin = { top:70, right: 30, bottom: 40, left: 80};
 const width = 1200 - margin.left - margin.right;
@@ -91,7 +90,6 @@ d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=
     svg.append('g')
     .style("font-size", "14px")
     .call(d3.axisLeft(y)
-        .ticks((d3.max(fullList, d => d.open)))
         .tickSize(0)
         .tickPadding(10))
     .call(g => g.select(".domain").remove())
