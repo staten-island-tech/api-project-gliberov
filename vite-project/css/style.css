@@ -51,7 +51,6 @@ opacity: .75;
 
 #container-box {
   background-color: darkblue;
-
   font-size: 2vh;
   color: green;
   text-align:center;
@@ -67,5 +66,9 @@ html{
 }
 
 #chart-container {
-  background-color: darkblue;
+  background-color: white;
+}
+
+.chart-title {
+  color: black;
 }

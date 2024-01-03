@@ -20,20 +20,22 @@ import {DOMSelectors} from './selectors'
 
 
 DOMSelectors.form.addEventListener('submit', function(event) {
+    DOMSelectors.chart.innerHTML = ''
     event.preventDefault();
     async function getTimeSeriesData() {
     let symbol = DOMSelectors.symbol.value.toUpperCase()
     console.log(symbol)
-    const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=full&apikey=754XM1A6MI6WI2K4`
+    const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=754XM1A6MI6WI2K4`
     try {
+
         const response = await fetch(URL)
         if (response.status != 200){throw new Error(response.statusText); }
         const data = await response.json()
-        const dates = Object.keys(data['Time Series (5min)']);
+        const dates = Object.keys(data['Time Series (30min)']);
         const fullList = []
-        const margin = { top:70, right: 30, bottom: 40, left: 80};
-        const width = 1200 - margin.left - margin.right;
-        const height = 500 - margin.top - margin.bottom;
+        const margin = { top:50, right: 50, bottom: 70, left: 80};
+        const width = window.innerWidth - margin.left - margin.right;
+        const height = window.innerHeight - margin.top - margin.bottom;
 
         const x = d3.scaleTime()
             .range([0,width]);
@@ -42,7 +44,9 @@ DOMSelectors.form.addEventListener('submit', function(event) {
 
         const line = d3.line()
             .x(d => x(d.date))
-            .y(d => y(d.open));
+            .y(d => y(d.open))
+        
+            
 
         const svg = d3.select("#chart-container")
             .append("svg")
@@ -54,15 +58,15 @@ DOMSelectors.form.addEventListener('submit', function(event) {
         const tooltip = d3.select("body")
         .append("div")
         .attr("class", "tooltip");
-        
+
         dates.forEach(date => {
             const point = { 
                 date: date, 
-                open: parseFloat(data['Time Series (5min)'][date]["1. open"]),
-                high: parseFloat(data['Time Series (5min)'][date]["2. high"]),
-                low: parseFloat(data['Time Series (5min)'][date]["3. low"]),
-                close: parseFloat(data['Time Series (5min)'][date]["4. close"]),
-                volume: parseFloat(data['Time Series (5min)'][date]["5. volume"])}
+                open: parseFloat(data['Time Series (30min)'][date]["1. open"]),
+                high: parseFloat(data['Time Series (30min)'][date]["2. high"]),
+                low: parseFloat(data['Time Series (30min)'][date]["3. low"]),
+                close: parseFloat(data['Time Series (30min)'][date]["4. close"]),
+                volume: parseFloat(data['Time Series (30min)'][date]["5. volume"])}
         
             fullList.push(point)
         })
@@ -79,9 +83,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
         svg.append('g')
             .attr("transform", `translate(0,${height})`)
             .style("font-size", "14px")
-            .call(d3.axisBottom(x)
-                .tickValues(x.ticks(d3.timeDay.every(5)))
-                .tickFormat(d3.timeFormat("%Y-%m-%d")))
+            .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
             .call(g => g.select(".domain").remove())
             .selectAll(".tick line")
             .style("stroke-opacity", 0)
@@ -121,7 +123,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
         .attr("x2", d => x(d))
         .attr("y1",0)
         .attr("y2", height)
-        .attr("stroke", "#e0e0e0")
+        .attr("stroke", "#A9A9A9")
         .attr("stroke-width", .5);
 
         svg.selectAll("yGrid")
@@ -131,7 +133,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
             .attr("x2", width)
             .attr("y1", d => y(d))
             .attr("y2", d => y(d))
-            .attr("stroke", "#e0e0e0")
+            .attr("stroke", "#A9A9A9")
             .attr("stroke-width", .5)
 
         const path = svg.append('path')
@@ -139,7 +141,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1)
-            .attr("d", line); 
+            .attr("d", line(fullList)); 
 
         const circle = svg.append("circle")
             .attr("r",0)
@@ -174,7 +176,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
             tooltip
                 .style("display", "block")
                 .style("left", `${xPos +100}px`)
-                .style("top", `${yPos+ 50}px`)
+                .style("top", `${yPos-30}px`)
                 .html(`<strong>Date:</strong> ${d.date}<br><strong>Price:</strong> ${d.open}`)
         })
             listeningRect.on("mouseleave", function() {
