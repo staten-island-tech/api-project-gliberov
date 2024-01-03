@@ -72,3 +72,7 @@ html{
 .chart-title {
   color: black;
 }
+
+#text {
+  font-size: 30px
+}
