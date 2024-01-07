@@ -18,13 +18,18 @@ getData(baseURL); */
 import '../css/style.css'
 import {DOMSelectors} from './selectors'
 
+getTimeSeriesData('AAPL')
 
 DOMSelectors.form.addEventListener('submit', function(event) {
     DOMSelectors.chart.innerHTML = ''
     event.preventDefault();
-    async function getTimeSeriesData() {
     let symbol = DOMSelectors.symbol.value.toUpperCase()
-    console.log(symbol)
+    getTimeSeriesData(symbol);
+}
+)
+
+async function getTimeSeriesData(symbol) {
+    d3.select("#chart-container").html("");
     const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=754XM1A6MI6WI2K4`
     try {
 
@@ -33,7 +38,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
         const data = await response.json()
         const dates = Object.keys(data['Time Series (30min)']);
         const fullList = []
-        const margin = { top:50, right: 50, bottom: 70, left: 80};
+        const margin = { top:100, right: 50, bottom: 70, left: 80};
         const width = window.innerWidth - margin.left - margin.right;
         const height = window.innerHeight - margin.top - margin.bottom;
 
@@ -57,7 +62,9 @@ DOMSelectors.form.addEventListener('submit', function(event) {
 
         const tooltip = d3.select("body")
         .append("div")
-        .attr("class", "tooltip");
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("display", "none");
 
         dates.forEach(date => {
             const point = { 
@@ -89,16 +96,6 @@ DOMSelectors.form.addEventListener('submit', function(event) {
             .style("stroke-opacity", 0)
         svg.selectAll(".tick text")
             .attr("fill", "#777");
-
-        svg.append("text")
-        .attr("transform","rotate(-90)")
-        .attr("x",0-(height/2))
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .style("font-size", "14px")
-        .style("fill", "#777")
-        .style("font-family", "sans-serif")
-        .text("Placeholder");
 
         svg.append('g')
         .style("font-size", "14px")
@@ -175,9 +172,9 @@ DOMSelectors.form.addEventListener('submit', function(event) {
 
             tooltip
                 .style("display", "block")
-                .style("left", `${xPos +100}px`)
-                .style("top", `${yPos-30}px`)
-                .html(`<strong>Date:</strong> ${d.date}<br><strong>Price:</strong> ${d.open}`)
+                .style("left", `${margin.left + (width / 2)}px`)  
+                .style("top", `${margin.top - 10}px`)
+                .html(`<strong>Date:</strong> ${d.date}<br><strong>Price:</strong> ${d.open}<br><strong>Volume:</strong> ${d.volume}`)
         })
             listeningRect.on("mouseleave", function() {
                 circle.transition()
@@ -186,29 +183,23 @@ DOMSelectors.form.addEventListener('submit', function(event) {
                 
                 tooltip.style("display","none")
             })
+        
+        displayChartTitle(symbol)
+        displaySourceCredit()
+        document.querySelector("h3").textContent = "";
+        document.querySelector("h4").textContent = "";
 
-            svg.append("text")
-                .attr("class", "chart-title")
-                .attr("x", margin.left - 115)
-                .attr("y", margin.top - 100)
-                .style("font-size", "24px")
-                .style("font-weight", "bold")
-                .style("font-family", "sans-serif")
-                .text(`${symbol} Time Series`)
-            
-                svg.append("text")
-                .attr("class", "source-credit")
-                .attr("x", width-1125)
-                .attr("y", height+ margin.bottom -3)
-                .style("font-size", "9px")
-                .style("font-family", "sans-serif")
-                .text("ty AlphaVantage for the datasets")
     }
     catch (error) {
-        document.querySelector("h1").textContent = error;  
-        document.querySelector("h2").textContent = "Please search for something else";
+        document.querySelector("h3").textContent = error;  
+        document.querySelector("h4").textContent = "Please search for something else";
     }
     }
-    getTimeSeriesData(URL);
-}
-)
+
+    function displayChartTitle(symbol) {
+        DOMSelectors.chartTitle.textContent = `${symbol} Time Series`;
+    }
+
+    function displaySourceCredit() {
+        DOMSelectors.chartSource.textContent = "ty to AlphaVantage for the datasets";
+    }
