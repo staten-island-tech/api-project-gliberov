@@ -30,7 +30,7 @@ DOMSelectors.form.addEventListener('submit', function(event) {
 
 async function getTimeSeriesData(symbol) {
     d3.select("#chart-container").html("");
-    const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=754XM1A6MI6WI2K4`
+    const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=P4HCJ66TONTUGOWE`
     try {
 
         const response = await fetch(URL)
@@ -38,7 +38,9 @@ async function getTimeSeriesData(symbol) {
         const data = await response.json()
         const dates = Object.keys(data['Time Series (30min)']);
         const fullList = []
-        const margin = { top:100, right: 50, bottom: 70, left: 80};
+        
+        
+        const margin = {top:100, right: 50, bottom: 70, left: 80};
         const width = window.innerWidth - margin.left - margin.right;
         const height = window.innerHeight - margin.top - margin.bottom;
 
@@ -172,9 +174,7 @@ async function getTimeSeriesData(symbol) {
 
             tooltip
                 .style("display", "block")
-                .style("left", `${margin.left + (width / 2)}px`)  
-                .style("top", `${margin.top - 10}px`)
-                .html(`<strong>Date:</strong> ${d.date}<br><strong>Price:</strong> ${d.open}<br><strong>Volume:</strong> ${d.volume}`)
+                .html(`<strong>Date:</strong>${d.date}<br><strong>Price:</strong> $${d.open}<br><strong>Volume:</strong> ${d.volume}`)
         })
             listeningRect.on("mouseleave", function() {
                 circle.transition()
@@ -191,8 +191,9 @@ async function getTimeSeriesData(symbol) {
 
     }
     catch (error) {
-        document.querySelector("h3").textContent = error;  
-        document.querySelector("h4").textContent = "Please search for something else";
+        console.log(document.querySelector("h4"))
+        DOMSelectors.h3.textContent = error;  
+        DOMSelectors.h4.textContent = "Please search for something else";
     }
     }
 
@@ -203,3 +204,5 @@ async function getTimeSeriesData(symbol) {
     function displaySourceCredit() {
         DOMSelectors.chartSource.textContent = "ty to AlphaVantage for the datasets";
     }
+
+    

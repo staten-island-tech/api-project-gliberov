@@ -7,19 +7,27 @@
     <title>API Project</title>
   </head>
   <body>
-    <div id="container-box"> 
-      <h1 id="text"> Liberov Investments (Want stoks? I GOTCHU) </h1>
-      <form action="" id="form">
-          <label for="symbol" id="text">Enter your symbol</label>
-          <input type="text" id="symbol" name="Symbol" />
-          <button class="button">Submit</button>
+  <section id="everything">
+    <header role="banner">
+      <h1 id="text" role="heading"> Liberov Investments (Want stoks? I GOTCHU) </h1>
+    </header>
+    <main role="main">
+      <section id="container-box">
+      <form action="" id="form" role="form">
+          <label for="symbol" id="text" role="label">Enter your symbol</label>
+          <input type="text" id="symbol" name="Symbol" aria-label="Symbol_Input" />
+          <button class="button" role="button">Submit</button>
       </form>
-    </div>
-    <div id="chart-title">
+    </section>
+  </section>
+    </main>
+    <section id="chart-title">
       <h2></h2>
-    </div>
-    <div id="chart-container"></div>
-    <div id="source-credit" class="source-credit"></div>
+      <h3 id="h3"></h3>
+      <h4 id="h4"></h4>
+    </section>
+    <section id="chart-container"></section>
+    <section id="source-credit" class="source-credit"></section>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="./js/main.js"></script>
   </body>

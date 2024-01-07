@@ -76,7 +76,7 @@ html{
 
 #chart-container {
   background-color: white;
-  width: 100%;
+  width: 100% !important;
 }
 
 #chart-title {
@@ -95,6 +95,7 @@ html{
 
 #text {
   font-size: 30px;
+  
   font-weight: bold;
   color: #2E33CC; 
   text-align: center;
@@ -102,3 +103,6 @@ html{
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
 }
 
+#everything {
+  background-color: #BCFBBC;
+}
