@@ -18,7 +18,7 @@ getData(baseURL); */
 import '../css/style.css'
 import {DOMSelectors} from './selectors'
 
-getTimeSeriesData('AAPL')
+getTimeSeriesData('SEDG')
 
 DOMSelectors.form.addEventListener('submit', function(event) {
     DOMSelectors.chart.innerHTML = ''
@@ -31,13 +31,13 @@ DOMSelectors.form.addEventListener('submit', function(event) {
 async function getTimeSeriesData(symbol) {
     d3.select("#chart-container").html("");
     const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=P4HCJ66TONTUGOWE`
+    const fullList = []
     try {
 
         const response = await fetch(URL)
         if (response.status != 200){throw new Error(response.statusText); }
         const data = await response.json()
         const dates = Object.keys(data['Time Series (30min)']);
-        const fullList = []
         
         
         const margin = {top:100, right: 50, bottom: 70, left: 80};
@@ -83,6 +83,7 @@ async function getTimeSeriesData(symbol) {
             fullList.push(point)
         })
         fullList.reverse()
+        console.log(fullList)
         const parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S")
         fullList.forEach( d => {
             d.date = parseDate(d.date);
@@ -191,12 +192,12 @@ async function getTimeSeriesData(symbol) {
         displaySourceCredit()
         document.querySelector("h3").textContent = "";
         document.querySelector("h4").textContent = "";
-
+    
     }
     catch (error) {
-        console.log(document.querySelector("h4"))
+        console.log("iglushglus")
+        if (fullList.length === 0) {DOMSelectors.chart.insertAdjacentHTML("beforeend", "ERROR: Wrong Symbol Buddy")}
         DOMSelectors.h3.textContent = error;  
-        DOMSelectors.h4.textContent = "Please search for something else";
     }
     }
 
