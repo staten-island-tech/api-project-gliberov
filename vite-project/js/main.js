@@ -20,8 +20,18 @@ import {DOMSelectors} from './selectors'
 
 getTimeSeriesData('SEDG')
 
+const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("display", "none") 
+        .style("flex-direction", "column") 
+        .style("align-items", "center") 
+        .style("justify-content", "center");
+
 DOMSelectors.form.addEventListener('submit', function(event) {
     DOMSelectors.chart.innerHTML = ''
+    tooltip.style("display","none")
     event.preventDefault();
     let symbol = DOMSelectors.symbol.value.toUpperCase()
     getTimeSeriesData(symbol);
@@ -33,7 +43,6 @@ async function getTimeSeriesData(symbol) {
     const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=30min&outputsize=full&apikey=P4HCJ66TONTUGOWE`
     const fullList = []
     try {
-
         const response = await fetch(URL)
         if (response.status != 200){throw new Error(response.statusText); }
         const data = await response.json()
@@ -62,14 +71,7 @@ async function getTimeSeriesData(symbol) {
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("display", "none") 
-        .style("flex-direction", "column") 
-        .style("align-items", "center") 
-        .style("justify-content", "center");
+        
 
         dates.forEach(date => {
             const point = { 
@@ -196,7 +198,8 @@ async function getTimeSeriesData(symbol) {
     }
     catch (error) {
         console.log("iglushglus")
-        if (fullList.length === 0) {DOMSelectors.chart.insertAdjacentHTML("beforeend", "ERROR: Wrong Symbol Buddy")}
+        if (fullList.length === 0) {
+        DOMSelectors.chart.insertAdjacentHTML("beforeend", "ERROR: Wrong Symbol Buddy")}
         DOMSelectors.h3.textContent = error;  
     }
     }
