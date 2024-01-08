@@ -66,7 +66,10 @@ async function getTimeSeriesData(symbol) {
         .append("div")
         .attr("class", "tooltip")
         .style("position", "absolute")
-        .style("display", "none");
+        .style("display", "none") 
+        .style("flex-direction", "column") 
+        .style("align-items", "center") 
+        .style("justify-content", "center");
 
         dates.forEach(date => {
             const point = { 
